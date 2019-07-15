@@ -23,13 +23,6 @@ float ry=0;
 float alpha = 255;
 PImage logo;
 
-//LeapMotoin
-/*
-import de.voidplus.leapmotion.*;
- LeapMotion leapmotion;
- Leap leap;
- //*/
-
 void setup() {
   size(960, 540, P3D);
   frameRate(60);
@@ -115,55 +108,6 @@ void draw() {
   background(0, 50, 0);
   showInfo();
 
-
-  /*
-  leap.draw();
-   if (leap.CheckChange()) {
-   PVector fingerPos=leap.getPos();
-   PVector pos=new PVector(0, 0);
-   PVector size=new PVector(0, 0);
-   // boolean click=leap.getClick();
-   for (int y=0; y<cp5MSG.length; y++) {
-   for (int x=0; x<2; x++) {
-   Bang b=bang[y*2+x];
-   pos=new PVector(b.getPosition()[0], b.getPosition()[1]);
-   size=new PVector(100, 50);
-   float n=0;
-   if (fingerPos.x>pos.x&&fingerPos.x<pos.x+size.x&&fingerPos.y>pos.y&&fingerPos.y<pos.y+size.y) {
-   
-   leap.setChange(true);
-   n=(x==0?-1:1);
-   n=(y==3?n/4:n);
-   sendMessage(cp5MSG[y].toString(), n);
-   }
-   }
-   }
-   
-   //PLAY
-   pos=new  PVector(PLAY.getPosition()[0], PLAY.getPosition()[1]);
-   size=new PVector(100, 100);
-   if (fingerPos.x>pos.x&&fingerPos.x<pos.x+size.x&&fingerPos.y>pos.y&&fingerPos.y<pos.y+size.y) {
-   leap.setChange(true);
-   PLAY.setValue(PLAY.getValue()==0?true:false);
-   }
-   //RESET
-   pos=new  PVector(RESET.getPosition()[0], RESET.getPosition()[1]);
-   size=new PVector(100, 25);
-   if (fingerPos.x>pos.x&&fingerPos.x<pos.x+size.x&&fingerPos.y>pos.y&&fingerPos.y<pos.y+size.y) {
-   leap.setChange(true);
-   RESET();
-   }
-   //CLEAR
-   pos=new  PVector(CLEAR.getPosition()[0], CLEAR.getPosition()[1]);
-   size=new PVector(width-50-250, height/2-100);
-   if (fingerPos.x>pos.x&&fingerPos.x<pos.x+size.x&&fingerPos.y>pos.y&&fingerPos.y<pos.y+size.y) {
-   leap.setChange(true);
-   CLEAR();
-   }
-   } else if (!leap.getClick()) {
-   leap.setChange(false);
-   }
-   //*/
 }
 void showInfo() {
   pushMatrix();
@@ -178,7 +122,7 @@ void showInfo() {
   fill(255, 255, 255, map(sin(alpha), -1, 1, 40, 255));
   text("Ver1.0", logo.width*2, height-16);
   textAlign(LEFT);
-  text("http:/www.github.com/SKyoKen/Leap_SonicPi", width/3, height-16);
+  text("http:/www.github.com/SKyoKen/Processing2SonicPi", width/3, height-16);
 }
 void CLEAR() {
   message="";
@@ -227,16 +171,3 @@ void controlEvent(ControlEvent theEvent) {
     }
   }
 }
-/*
-   void leapOnInit() {
- writemsg("Leap Motion Init");
- }
- void leapOnConnect() {
- writemsg("Leap Motion Connect");
- }
- void leapOnDisconnect() {
- writemsg("Leap Motion Disconnect");
- }
- void leapOnExit() {
- writemsg("Leap Motion Exit");
- }///*/
