@@ -15,8 +15,10 @@ ControlP5 cp5;
 Toggle PLAY;
 Bang RESET, CLEAR;
 Bang[] bang=new Bang[4*2];
-String message="";
+Textarea messageBox;
 String[] cp5MSG={"MUSICNUM", "VOLUME", "OCTAVE", "TIME"};
+String version="Ver1.1";
+Println console;
 
 //showInfo
 float ry=0;
@@ -26,6 +28,10 @@ PImage logo;
 void setup() {
   size(960, 540, P3D);
   frameRate(60);
+
+  //osc
+  oscP5 = new OscP5(this, 8000);
+  location = new NetAddress("", 4559);
 
   //font
   PFont font = createFont("consolas", 32);
@@ -75,39 +81,29 @@ void setup() {
     .setFont(fontMsg)
     .align(CENTER, CENTER, CENTER, CENTER);  
   //MessageBox
-  cp5.addTextarea("Message")
+  messageBox=cp5.addTextarea("Message")
     .setPosition(50, height/2+50)
     .setSize(width-50-250, height/2-100)
     .setFont(fontMsg)
-    .setLineHeight(16)
+    .setLineHeight(20)
     .setColor(color(222))
     .setColorBackground(color(0, 102, 0, 160))
     .setColorForeground(color(255, 100))
-    .setText(message);
-  ;
+    ;
+
+  console=cp5.addConsole(messageBox);
   //ClearButon
   CLEAR=cp5.addBang("CLEAR")
     .setPosition(width-250, height/2+50)
     .setSize(200, height/2-100)
     .setFont(font)
     .align(CENTER, CENTER, CENTER, CENTER);
-
-
-  //osc
-  oscP5 = new OscP5(this, 8000);
-  location = new NetAddress("", 4559);
-
-  //Leap
-  /*
-  leapmotion = new LeapMotion(this);
-  leap=new Leap(leapmotion);
-  //*/
 }
 
 void draw() {
   background(0, 50, 0);
+  // println(1);
   showInfo();
-
 }
 void showInfo() {
   pushMatrix();
@@ -120,20 +116,17 @@ void showInfo() {
   ry += 0.02;
   alpha+=random(0.02, 0.09);
   fill(255, 255, 255, map(sin(alpha), -1, 1, 40, 255));
-  text("Ver1.0", logo.width*2, height-16);
+  text(version, logo.width*2, height-16);
   textAlign(LEFT);
   text("http:/www.github.com/SKyoKen/Processing2SonicPi", width/3, height-16);
 }
 void CLEAR() {
-  message="";
-  cp5.get(Textarea.class, "Message").setText(message);
+  console.clear();
 }
 void writemsg(String s) {
   //year/month/day hour:minute:second
   String time=String.format("%d/%02d/%02d %02d:%02d:%02d\t", year(), month(), day(), hour(), minute(), second());
-  message+=time+s+"\n";
-  cp5.get(Textarea.class, "Message").setText(message);
-  println(s);
+  println(time+s);
 }
 void sendMessage(String... s) {
   OscMessage msg = new OscMessage(s[0]);
