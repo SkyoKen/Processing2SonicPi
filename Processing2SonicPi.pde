@@ -1,6 +1,6 @@
 //-----------------------------------------------------------------------------    
 //作成日：    2019/07/13
-//修正日：    
+//修正日：    2019/07/14
 //-----------------------------------------------------------------------------
 //OSC
 import oscP5.*;
@@ -13,12 +13,11 @@ import controlP5.*;
 ControlP5 cp5;
 
 Toggle PLAY;
-Bang RESET, CLEAR;
-Bang[] bang=new Bang[4*2];
 Textarea messageBox;
+Println console;
 String[] cp5MSG={"MUSICNUM", "VOLUME", "OCTAVE", "TIME"};
 String version="Ver1.1";
-Println console;
+String webAddress="https://github.com/SkyoKen/Processing2SonicPi";
 
 //showInfo
 float ry=0;
@@ -59,7 +58,7 @@ void setup() {
       ;
     for (int x=0; x<2; x++) {
       pos=new PVector(100+btnSize*3*(y%2), 100+btnSize*(y/2));
-      bang[y*2+x]=cp5.addBang(cp5MSG[y]+(x==0?"-":"+"))
+      cp5.addBang(cp5MSG[y]+(x==0?"-":"+"))
         .setLabel(x==0?"←":"→")
         .setPosition(pos.x+btnSize*x*1.25, pos.y)
         .setSize(btnSize, btnSize/2)
@@ -75,7 +74,7 @@ void setup() {
     .setFont(font)
     .align(CENTER, CENTER, CENTER, CENTER);
   //resetButon
-  RESET=cp5.addBang("RESET")
+  cp5.addBang("RESET")
     .setPosition(width-250+25, 225)
     .setSize(100, 25)
     .setFont(fontMsg)
@@ -93,7 +92,7 @@ void setup() {
 
   console=cp5.addConsole(messageBox);
   //ClearButon
-  CLEAR=cp5.addBang("CLEAR")
+  cp5.addBang("CLEAR")
     .setPosition(width-250, height/2+50)
     .setSize(200, height/2-100)
     .setFont(font)
@@ -102,12 +101,11 @@ void setup() {
 
 void draw() {
   background(0, 50, 0);
-  // println(1);
   showInfo();
 }
 void showInfo() {
   pushMatrix();
-  translate(logo.width*2, height-60, 40);
+  translate(logo.width*1.5, height-60, 40);
   rotateY(ry);
   rotateY(PI*2);
   scale(0.4);
@@ -116,9 +114,8 @@ void showInfo() {
   ry += 0.02;
   alpha+=random(0.02, 0.09);
   fill(255, 255, 255, map(sin(alpha), -1, 1, 40, 255));
-  text(version, logo.width*2, height-16);
-  textAlign(LEFT);
-  text("http:/www.github.com/SKyoKen/Processing2SonicPi", width/3, height-16);
+  textAlign(CENTER,BOTTOM);
+  text(version+"   "+webAddress, width/2, height-16);
 }
 void CLEAR() {
   console.clear();
@@ -153,9 +150,9 @@ void RESET() {
 }
 void controlEvent(ControlEvent theEvent) {
   if (theEvent.isAssignableFrom(Bang.class)) {
-    String m=theEvent.getName();
-    float n=0;
     for (int i=0; i<cp5MSG.length; i++) {
+      String m=theEvent.getName();
+      float n=0;
       if (cp5MSG[i].equals(m.substring(0, m.length()-1))) {
         n=("-".equals(m.substring(m.length()-1)))?-1:1;
         n=("TIME".equals(cp5MSG[i]))?n/4:n;
