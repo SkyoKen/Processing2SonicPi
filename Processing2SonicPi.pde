@@ -1,6 +1,6 @@
 //-----------------------------------------------------------------------------    
 //作成日：    2019/07/13
-//修正日：    2019/07/14
+//修正日：    2019/10/18
 //-----------------------------------------------------------------------------
 //OSC
 import oscP5.*;
@@ -11,18 +11,10 @@ NetAddress location;
 //ControlP5
 import controlP5.*;
 ControlP5 cp5;
-
-Toggle PLAY;
-Textarea messageBox;
 Println console;
 String[] cp5MSG={"MUSICNUM", "VOLUME", "OCTAVE", "TIME"};
-String version="Ver1.1";
-String webAddress="https://github.com/SkyoKen/Processing2SonicPi";
 
-//showInfo
-float ry=0;
-float alpha = 255;
-PImage logo;
+ShowInfo info;
 
 void setup() {
   size(960, 540, P3D);
@@ -36,9 +28,9 @@ void setup() {
   PFont font = createFont("consolas", 32);
   PFont fontMsg=createFont("consolas", 24);
   textFont(fontMsg);
+  
+  info=new ShowInfo(24);
 
-  //logo
-  logo=loadImage("./data/icon.png");
 
   //cp5
   cp5 = new ControlP5(this);
@@ -67,7 +59,7 @@ void setup() {
     }
   }
   //PlayButon
-  PLAY=cp5.addToggle("PLAY")
+  cp5.addToggle("PLAY")
     .setPosition(width-250+25, 100)
     .setLabel("PLAY")
     .setSize(100, 100)
@@ -80,7 +72,7 @@ void setup() {
     .setFont(fontMsg)
     .align(CENTER, CENTER, CENTER, CENTER);  
   //MessageBox
-  messageBox=cp5.addTextarea("Message")
+  console=cp5.addConsole(cp5.addTextarea("Message")
     .setPosition(50, height/2+50)
     .setSize(width-50-250, height/2-100)
     .setFont(fontMsg)
@@ -88,9 +80,7 @@ void setup() {
     .setColor(color(222))
     .setColorBackground(color(0, 102, 0, 160))
     .setColorForeground(color(255, 100))
-    ;
-
-  console=cp5.addConsole(messageBox);
+    );
   //ClearButon
   cp5.addBang("CLEAR")
     .setPosition(width-250, height/2+50)
@@ -101,22 +91,9 @@ void setup() {
 
 void draw() {
   background(0, 50, 0);
-  showInfo();
+  info.update();
 }
-void showInfo() {
-  pushMatrix();
-  translate(logo.width*1.5, height-60, 40);
-  rotateY(ry);
-  rotateY(PI*2);
-  scale(0.4);
-  image(logo, -logo.width/2, 0);
-  popMatrix();
-  ry += 0.02;
-  alpha+=random(0.02, 0.09);
-  fill(255, 255, 255, map(sin(alpha), -1, 1, 40, 255));
-  textAlign(CENTER,BOTTOM);
-  text(version+"   "+webAddress, width/2, height-16);
-}
+
 void CLEAR() {
   console.clear();
 }
@@ -132,6 +109,7 @@ void sendMessage(String... s) {
       msg.add(str);
     }
   }
+
   oscP5.send(msg, location);
   writemsg("/osc/"+s[0]+" "+s[1]);
 }
@@ -145,7 +123,7 @@ void PLAY(boolean state) {
   sendMessage("FLAG", state?"START":"STOP");
 }
 void RESET() {
-  PLAY.setValue(false);
+  getController("PLAY").setValue(0);
   sendMessage("FLAG", "RESET");
 }
 void controlEvent(ControlEvent theEvent) {
@@ -160,4 +138,9 @@ void controlEvent(ControlEvent theEvent) {
       }
     }
   }
+}
+
+
+Controller getController(String name) {
+  return  cp5.getController(name);
 }
